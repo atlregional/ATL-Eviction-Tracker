@@ -19,7 +19,8 @@ const includedCounties = [
 	'135' //Gwinnett
 ];
 
-const endDate = '02/06/2022';
+const endDate = '03/065/2022';
+const monthlyEndDate = '2/28/2022';
 
 mongoose
 	.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -57,19 +58,22 @@ const fetchData = async () => {
 				);
 		})
 		.catch(err => console.log('Error Fetching Fulton Data: ', err));
-	await axios
-		.get(
-			'https://evictions.design.gatech.edu/rest/atlanta_metro_area_tracts?select=id,filedate,tractid,countyfp10,totalfilings,totalansweredfilings'
-		)
-		.then(({ data }) => {
-			data
-				.filter(item => includedCounties.includes(item.countyfp10))
-				.sort(sortByDate('filedate'))
+	// await axios
+	// 	.get(
+	// 		'https://evictions.design.gatech.edu/rest/atlanta_metro_area_tracts?select=id,filedate,tractid,countyfp10,totalfilings,totalansweredfilings'
+	// 	)
+  await db.tractDaily.find({})
+		.then(data => {
+      // console.log(data)
+			data.filter(item => item.TractID && includedCounties.includes(item.CountyID))
+				.sort(sortByDate('FilingDate'))
 				.forEach(item =>
 					gaTechData.push({
-						...item,
-						totalfilings: Number(item.totalfilings),
-						totalansweredfilings: Number(item.totalansweredfilings)
+            filedate: item.FilingDate,
+            tractid: item.TractID,
+						countyfp10: item.CountyID,
+						totalfilings: Number(item.TotalFilings),
+						totalansweredfilings: Number(item.TotalAnsweredFilings)
 					})
 				);
 		})
@@ -83,13 +87,14 @@ const aggregateTractMonth = ([fromGaTech, fromFulton]) => {
 	const dataArr = [...filteredArr, ...fromFulton].sort(sortByDate('filedate'));
 	const obj = {};
 
+
 	dataArr
   .filter(({filedate}) => 
       new Date(filedate).getTime() >= new Date('1/1/2020').getTime() &&
-      new Date(filedate).getTime() <= new Date(endDate).getTime()
+      new Date(filedate).getTime() <= new Date(monthlyEndDate).getTime()
   )
   .forEach(({filedate, totalfilings, tractid, countyfp10}) => {
-		const filingMonth = moment(filedate)
+		const filingMonth = moment(new Date(filedate))
 			.startOf('month')
 			.format('MM/DD/YYYY');
 
@@ -117,7 +122,8 @@ const aggregateTractMonth = ([fromGaTech, fromFulton]) => {
       obj[key].FilingsByMonth['During the Pandemic'] += totalfilings
     }
 	});
-
+   
+  console.log(Object.values(obj).filter(item => !item.TractID))
 	return Object.values(obj);
 };
 
@@ -171,7 +177,7 @@ const aggregateCounty = ([fromGaTech, fromFulton], type) => {
 			({ filedate }) =>
 				// new Date(filedate).getTime() >= new Date('1/1/2020').getTime()
         new Date(filedate).getTime() >= new Date('1/1/2020').getTime() &&
-        new Date(filedate).getTime() <= new Date(endDate).getTime()
+        new Date(filedate).getTime() <= new Date(type === 'Month' ? monthlyEndDate : endDate).getTime()
 		)
 		.forEach(({ filedate, countyfp10, totalfilings, totalansweredfilings }) => {
 			const date = moment(filedate)
@@ -257,6 +263,8 @@ getBackUpData()
     fetchData()
     .then(data => {
 
+      // console.log(data)
+
       //Add Archiver and Validator
       
       Promise.allSettled([
@@ -293,7 +301,7 @@ getBackUpData()
           .catch(err => console.log(err))
       ])
       .then(() => {
-        AggregateByBuilding();
+        // AggregateByBuilding();
         console.log('Data successfully updated')
       })
       .catch(err => console.log('Error Settling Promise: ', err));

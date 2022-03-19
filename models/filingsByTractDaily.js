@@ -3,15 +3,15 @@ const Schema = mongoose.Schema;
 
 const filingsByTractDailySchema = new Schema({
 	FilingDate: { type: String, required: true },
-	TractID: { type: Number, required: true },
-	CountyID: { type: Number, required: true },
-	TotalFilings: { type: Number, required: true },
-	TotalAnsweredFilings: { type: Number, required: true }
+	TractID: { type: String, required: true },
+	CountyID: { type: String, required: true },
+	TotalFilings: { type: String, required: true },
+	TotalAnsweredFilings: { type: String, required: true }
 	// UniqueIdentifier: { type: String, required: true }
-});
+}, {collection: 'filingsbytractdaily'});
 
 const filingsByTractDaily = mongoose.model(
-	'filingsbytractdaily',
+	'filingsbytractaily',
 	filingsByTractDailySchema
 );
 

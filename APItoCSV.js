@@ -45,7 +45,7 @@ const getData = async () => {
 // getData()
 //   .then(data => {
 //     console.log(data);
-    const data = require('./metrocase-12-13-2021.json')
+    const data = require('./metrocase-03-07-2021.json')
     const csv = parse(data);
 
     fs.writeFile(`./data/${process.argv[2]}.csv`, csv, err => err

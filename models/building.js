@@ -16,7 +16,7 @@ const buildingSchema = new Schema({
   pandemicfilings: {type: Number, required: true},
   pandemicratio: {type: Number, required: true},
   monthlyfilings: {type: Object || Array, required: false},
-  filings: {type: Array, required: true},
+  filings: {type: Array, required: false},
 });
 
 const building = mongoose.model('building', buildingSchema);

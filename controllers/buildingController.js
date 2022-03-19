@@ -6,6 +6,7 @@ module.exports = {
     // console.log(req.query);
     content
       .find()
+      .select(['-filings'])
       // .sort('totalfilings')
       .then((dbModel) => res.json(dbModel))
       .catch((err) => res.status(422).json(err));
