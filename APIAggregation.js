@@ -19,7 +19,7 @@ const includedCounties = [
 	'135' //Gwinnett
 ];
 
-const endDate = '03/065/2022';
+const endDate = '03/06/2022';
 const monthlyEndDate = '2/28/2022';
 
 mongoose

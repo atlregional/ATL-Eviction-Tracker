@@ -5,5 +5,6 @@ module.exports = {
   countyMonth: require("./filingsByCountyMonth"),
   countyWeek: require("./filingsByCountyWeek"),
   tractMonth: require("./filingsByTractMonth"),
-  tractDaily: require('./filingsByTractDaily')
+  tractDaily: require('./filingsByTractDaily'),
+  cases: require('./cases')
 };

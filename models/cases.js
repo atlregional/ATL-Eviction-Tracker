@@ -6,7 +6,7 @@ const CasesSchema = new Schema({
 	street: { type: String, required: true },
 	city: { type: String, required: true },
 	zip: { type: String, required: true },
-	filingDate: { type: String, required: true },
+	fileDate: { type: String, required: true },
 	answer: { type: String, required: true },
 	county: { type: String, required: true },
 	geometry: { type: Object, required: true },
@@ -20,7 +20,11 @@ const CasesSchema = new Schema({
 	defaultJudgmentDate: { type: String, required: true },
 	judgmentDate: { type: String, required: true },
 	tractID: { type: String, required: true },
-	blockGroupID: { type: String, required: true }
+	blockGroupID: { type: String, required: true },
+  latitude: { type: String, required: true },
+  longitude: { type: String, required: true },
+  street: { type: String, required: false },
+  streetAddress:  { type: String, required: true }
 });
 
 const Case = mongoose.model('case', CasesSchema);
