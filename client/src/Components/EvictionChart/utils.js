@@ -6,7 +6,7 @@ export default {
     timeScale,
     dateField,
     totalFilingsIndicator,
-    answeredFilingsIndicator,
+    // answeredFilingsIndicator,
     baselineIndicator
   }) => {
     const timeLabel =
@@ -21,9 +21,9 @@ export default {
         timeScale === 'monthly' ? 'MMMM YYYY' : 'M/D/YYYY'
       ),
       'Total Filings': item[totalFilingsIndicator],
-      'Answered Filings': item[answeredFilingsIndicator],
-      'Answer Rate':
-        item[answeredFilingsIndicator] / item[totalFilingsIndicator],
+      // 'Answered Filings': item[answeredFilingsIndicator],
+      // 'Answer Rate':
+      //   item[answeredFilingsIndicator] / item[totalFilingsIndicator],
       'Baseline (Total Filings, 2019)': item[baselineIndicator]
     };
   },

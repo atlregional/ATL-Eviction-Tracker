@@ -44,17 +44,29 @@ const EvictionChart = ({
 
   const dateField = timeScale === 'weekly' ? 'FilingWeek' : 'FilingMonth';
 
-  const addBarDifferenceField = arr =>
-    arr?.map(item => ({
+  // const addBarDifferenceField = arr =>
+  //   arr?.map(item => ({
+  //     ...item,
+  //     BarDifference: item.TotalFilings - item.AnsweredFilings
+  //   }));
+
+  const addDifferenceFromBaselineValues = arr =>
+    arr?.map(item =>{
+       const pDifference =  (item.BaselineFilings - item.TotalFilings) / item.BaselineFilings;
+      
+      return ({
       ...item,
-      BarDifference: item.TotalFilings - item.AnsweredFilings
-    }));
+      PercentDifferenceFromBaseline: numeral(Math.abs(pDifference)).format('0,0.0%'),
+      DifferenceFromBaselineDirection: pDifference > 0 ? 'more' : 'less'
+    })});
 
   useEffect(() => {
     const dataArray =
       timeScale === 'weekly'
-        ? chartDataWeekly?.sort((a, b) => SortByDate(a, b, 'FilingWeek'))
+        ? chartDataWeekly?.filter(({FilingWeek}) => FilingWeek !== '12/29/2019')?.sort((a, b) => SortByDate(a, b, 'FilingWeek'))
         : chartDataMonthly?.sort((a, b) => SortByDate(a, b, 'FilingMonth'));
+
+    // console.log(dataArray);
     // .filter((month, i) =>
     //   new Date(dateRange.end).getTime() > new Date(moment(dateRange.end).endOf('month').subtract({days: 3})).getTime()
     //     ? true
@@ -67,7 +79,7 @@ const EvictionChart = ({
         timeScale: timeScale,
         dateField: dateField,
         totalFilingsIndicator: config.totalFilingsKey,
-        answeredFilingsIndicator: config.answeredFilingsKey,
+        // answeredFilingsIndicator: config.answeredFilingsKey,
         baselineIndicator: config.baselineKey
       })
     );
@@ -79,7 +91,8 @@ const EvictionChart = ({
       end: dataArray?.[dataArray.length - 1][dateField]
     };
     setBrushDomain(brushConfig);
-    setChartData(addBarDifferenceField(dataArray));
+    // setChartData(addBarDifferenceField(dataArray));
+    setChartData(addDifferenceFromBaselineValues(dataArray));
     setCSVData(dataForCSV);
   }, [
     countyFilter,
@@ -169,15 +182,15 @@ const EvictionChart = ({
               }
             />
 
-            <Bar
+            {/* <Bar
               dataKey={'AnsweredFilings'}
               name='Answered Filings'
               stackId='a'
               fill='#a9a9a9'
-            />
+            /> */}
 
             <Bar
-              dataKey={'BarDifference'}
+              dataKey={'TotalFilings'}
               name='Total Filings'
               stackId='a'
               fill='#DC1C13'
